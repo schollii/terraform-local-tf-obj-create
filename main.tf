@@ -1,17 +1,16 @@
 locals {
-  paths = [
-    for idx in range(0, length(var.paths) - 1, 2): var.paths[idx]
-  ]
-  leafs = [
-    for idx in range(1, length(var.paths), 2): try(jsondecode(var.paths[idx]), yamldecode(var.paths[idx]), var.paths[idx])
-  ]
+  leaf = try(jsondecode(var.leaf_obj), yamldecode(var.leaf_obj), var.leaf_obj)
 }
 
-module "sub_map" {
-  count = length(local.paths)
-  source   = "./tf_simple_object_creator"
+locals {
+  path_list = split(".", var.path)
+  highest_idx = length(local.path_list) - 1
 
-  path = local.paths[count.index]
-  leaf_obj = local.leafs[count.index]
+  level0 = local.leaf
+  level1 = try({ local.path_list[local.highest_idx - 0] = local.level0 }, local.level0)
+  level2 = try({ local.path_list[local.highest_idx - 1] = local.level1 }, local.level1)
+  level3 = try({ local.path_list[local.highest_idx - 2] = local.level2 }, local.level2)
+  level4 = try({ local.path_list[local.highest_idx - 3] = local.level3 }, local.level3)
+  level5 = try({ local.path_list[local.highest_idx - 4] = local.level4 }, local.level4)
+  result = try({ local.path_list[local.highest_idx - 5] = local.level5 }, local.level5)
 }
-

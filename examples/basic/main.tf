@@ -1,32 +1,37 @@
-locals {
-  from_yaml_str = file("${path.root}/example.yaml")
-  from_json_str = file("${path.root}/example.json")
-}
-
-module "simple_test" {
+module "leaf_tf_obj" {
   source = "../../"
-
-
-  paths = [
-    "a.b1", {
-      c = {
-        d = "d"
-      }
-    },
-    "a.b2", local.from_json_str,
-    "a.b3", local.from_yaml_str,
-  ]
-
-  merge_into = {
-    a = {
-      z = "z"
-      b = {
-        c = "c"
-      }
+  
+  path     = "a.b"
+  leaf_obj = {
+    c = {
+      d = "d"
     }
   }
 }
 
-output "result" {
-  value = module.simple_test.merged
+module "leaf_yaml_str" {
+  source = "../../"
+  
+  path     = "a.b"
+  leaf_obj = file("${path.root}/example.yaml")
+}
+
+module "leaf_json_str" {
+  source = "../../"
+  
+  path     = "a.b"
+  leaf_obj = file("${path.root}/example.json")
+}
+
+
+output "leaf_json_str" {
+  value = module.leaf_json_str.result
+}
+
+output "leaf_yaml_str" {
+  value = module.leaf_yaml_str.result
+}
+
+output "leaf_tf_obj" {
+  value = module.leaf_tf_obj.result
 }

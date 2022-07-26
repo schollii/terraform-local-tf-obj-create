@@ -1,9 +1,9 @@
-variable "paths" {
-  description = "map of paths to either json/yaml string or terraform object"
+variable "path" {
+  type        = string
+  description = "dotted path of json key value to get"
 }
 
-variable "merge_into" {
+variable "leaf_obj" {
   type        = any
-  description = "The terraform object to query (used if json_or_yaml_str is null or does not parse)"
-  default     = {}
+  description = "The leaf object at given path"
 }
